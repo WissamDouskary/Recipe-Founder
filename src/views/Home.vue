@@ -89,7 +89,7 @@ onMounted(async () => {
         <PulseLoader v-if="state.isLoading" class="text-center"/>
         <div v-else class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           
-          <RecipsCards v-for="meal in state.meals.slice(0, 3)" :meal="meal" class="bg-white rounded-xl shadow-lg overflow-hidden hover:shadow-xl flex flex-col transition-shadow duration-300">
+          <RecipsCards v-for="meal in state.meals.slice(0, 3)" :meal="meal" :key="meal.id" class="bg-white rounded-xl shadow-lg overflow-hidden hover:shadow-xl flex flex-col transition-shadow duration-300">
           </RecipsCards>
 
         </div>
