@@ -1,5 +1,5 @@
 <script setup>
-import { onMounted, reactive, ref } from "vue";
+import { computed, onMounted, reactive, ref } from "vue";
 import { useRoute } from "vue-router";
 import PulseLoader from "vue-spinner/src/PulseLoader.vue";
 import axios from "axios";
@@ -43,6 +43,20 @@ const getVisibleDescriptions = (instructions) => {
 const changeVisibiltyOfDescriptions = () => {
   showmore.value = !showmore.value;
 };
+
+function ingredientsList(item) {
+  const ingArr = [];
+  for (let i = 1; i <= 20; i++) {
+    const ingredient = item[`strIngredient${i}`];
+    const measure = item[`strMeasure${i}`];
+
+    if (ingredient && ingredient.trim() !== "") {
+      ingArr.push(`${measure ? measure.trim() : ''} ${ingredient.trim()}`);
+    }
+  }
+  return ingArr;
+}
+
 </script>
 
 <template>
@@ -324,68 +338,12 @@ const changeVisibiltyOfDescriptions = () => {
               Ingredients
             </h2>
             <ul class="space-y-3">
-              <li class="flex items-center">
+              <li class="flex items-center" v-for="(ingredient, index) in ingredientsList(item)" :key="index">
                 <input
                   type="checkbox"
                   class="h-5 w-5 rounded border-gray-300 text-orange-500 focus:ring-orange-500"
                 />
-                <span class="ml-3 text-gray-700">200ml Milk</span>
-              </li>
-              <li class="flex items-center">
-                <input
-                  type="checkbox"
-                  class="h-5 w-5 rounded border-gray-300 text-orange-500 focus:ring-orange-500"
-                />
-                <span class="ml-3 text-gray-700">60ml Oil</span>
-              </li>
-              <li class="flex items-center">
-                <input
-                  type="checkbox"
-                  class="h-5 w-5 rounded border-gray-300 text-orange-500 focus:ring-orange-500"
-                />
-                <span class="ml-3 text-gray-700">2 Eggs</span>
-              </li>
-              <li class="flex items-center">
-                <input
-                  type="checkbox"
-                  class="h-5 w-5 rounded border-gray-300 text-orange-500 focus:ring-orange-500"
-                />
-                <span class="ml-3 text-gray-700">1600g Flour</span>
-              </li>
-              <li class="flex items-center">
-                <input
-                  type="checkbox"
-                  class="h-5 w-5 rounded border-gray-300 text-orange-500 focus:ring-orange-500"
-                />
-                <span class="ml-3 text-gray-700">3 tsp Baking Powder</span>
-              </li>
-              <li class="flex items-center">
-                <input
-                  type="checkbox"
-                  class="h-5 w-5 rounded border-gray-300 text-orange-500 focus:ring-orange-500"
-                />
-                <span class="ml-3 text-gray-700">1/2 tsp Salt</span>
-              </li>
-              <li class="flex items-center">
-                <input
-                  type="checkbox"
-                  class="h-5 w-5 rounded border-gray-300 text-orange-500 focus:ring-orange-500"
-                />
-                <span class="ml-3 text-gray-700">25g Unsalted Butter</span>
-              </li>
-              <li class="flex items-center">
-                <input
-                  type="checkbox"
-                  class="h-5 w-5 rounded border-gray-300 text-orange-500 focus:ring-orange-500"
-                />
-                <span class="ml-3 text-gray-700">45g Sugar</span>
-              </li>
-              <li class="flex items-center">
-                <input
-                  type="checkbox"
-                  class="h-5 w-5 rounded border-gray-300 text-orange-500 focus:ring-orange-500"
-                />
-                <span class="ml-3 text-gray-700">3 tbs Peanut Butter</span>
+                <span class="ml-3 text-gray-700">{{ ingredient }}</span>
               </li>
             </ul>
           </div>
@@ -455,12 +413,14 @@ const changeVisibiltyOfDescriptions = () => {
             <div class="space-y-6">
               <div
                 class="flex"
-                v-for="desc in getVisibleDescriptions(item.strInstructions)"
+                v-for="(desc, index) in getVisibleDescriptions(item.strInstructions)"
+                :key="index"
               >
                 <div class="flex-shrink-0 mr-4">
                   <div
                     class="w-8 h-8 bg-orange-500 rounded-full flex items-center justify-center text-white font-bold"
-                  ></div>
+                  >{{ index+1 }}
+                </div>
                 </div>
                 <div>
                   <p class="text-gray-700">
