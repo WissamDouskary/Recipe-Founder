@@ -2,11 +2,14 @@
 import { computed, onMounted, reactive, ref } from "vue";
 import { useRoute } from "vue-router";
 import PulseLoader from "vue-spinner/src/PulseLoader.vue";
+import { useToast } from "vue-toastification";
 import axios from "axios";
 
 const route = useRoute();
 const recipeId = route.params.id;
 const showmore = ref(true);
+const FavoriteArray = ref([]);
+const toast = useToast();
 
 const state = reactive({
   meal: [{}],
@@ -51,12 +54,32 @@ function ingredientsList(item) {
     const measure = item[`strMeasure${i}`];
 
     if (ingredient && ingredient.trim() !== "") {
-      ingArr.push(`${measure ? measure.trim() : ''} ${ingredient.trim()}`);
+      ingArr.push(`${measure ? measure.trim() : ""} ${ingredient.trim()}`);
     }
   }
   return ingArr;
 }
 
+const addMealToFavorite = () => {
+  const localStoragefav = localStorage.getItem("favorites");
+  const currentFavorites = FavoriteArray.value
+    ? JSON.parse(localStoragefav)
+    : [];
+  state.meal.forEach((item) => {
+    const isAlreadyFavorited = FavoriteArray.value.some(
+      (fav) => fav.idMeal === item.idMeal
+    );
+
+    if (isAlreadyFavorited) {
+      toast.success("Meal already added to favorites.");
+    } else {
+      currentFavorites.push(item);
+      localStorage.setItem("favorites", JSON.stringify(currentFavorites));
+      FavoriteArray.value = currentFavorites;
+      toast.success("Meal added to favorites.");
+    }
+  });
+};
 </script>
 
 <template>
@@ -106,23 +129,7 @@ function ingredientsList(item) {
       <!-- Action Buttons -->
       <div class="absolute top-4 right-4 flex space-x-2">
         <button
-          class="bg-white/80 backdrop-blur-sm p-2 rounded-full shadow-lg hover:bg-white transition-all duration-200"
-        >
-          <svg
-            class="h-6 w-6 text-gray-800"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-          >
-            <path
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              stroke-width="2"
-              d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z"
-            ></path>
-          </svg>
-        </button>
-        <button
+          @click="addMealToFavorite"
           class="bg-white/80 backdrop-blur-sm p-2 rounded-full shadow-lg hover:bg-white transition-all duration-200"
         >
           <svg
@@ -155,54 +162,6 @@ function ingredientsList(item) {
           </span>
         </div>
         <h1 class="text-3xl md:text-4xl font-bold mb-2">{{ item.strMeal }}</h1>
-        <div class="flex items-center space-x-4">
-          <div class="flex items-center">
-            <div class="flex text-yellow-400">
-              <svg class="h-4 w-4 fill-current" viewBox="0 0 20 20">
-                <path
-                  d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"
-                />
-              </svg>
-              <svg class="h-4 w-4 fill-current" viewBox="0 0 20 20">
-                <path
-                  d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"
-                />
-              </svg>
-              <svg class="h-4 w-4 fill-current" viewBox="0 0 20 20">
-                <path
-                  d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"
-                />
-              </svg>
-              <svg class="h-4 w-4 fill-current" viewBox="0 0 20 20">
-                <path
-                  d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"
-                />
-              </svg>
-              <svg class="h-4 w-4 fill-current" viewBox="0 0 20 20">
-                <path
-                  d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"
-                />
-              </svg>
-            </div>
-            <span class="ml-1 text-sm">4.8 (124 reviews)</span>
-          </div>
-          <div class="flex items-center space-x-1">
-            <svg
-              class="h-4 w-4"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
-                d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
-              ></path>
-            </svg>
-            <span class="text-sm">30 min</span>
-          </div>
-        </div>
       </div>
     </div>
 
@@ -338,7 +297,11 @@ function ingredientsList(item) {
               Ingredients
             </h2>
             <ul class="space-y-3">
-              <li class="flex items-center" v-for="(ingredient, index) in ingredientsList(item)" :key="index">
+              <li
+                class="flex items-center"
+                v-for="(ingredient, index) in ingredientsList(item)"
+                :key="index"
+              >
                 <input
                   type="checkbox"
                   class="h-5 w-5 rounded border-gray-300 text-orange-500 focus:ring-orange-500"
@@ -413,14 +376,17 @@ function ingredientsList(item) {
             <div class="space-y-6">
               <div
                 class="flex"
-                v-for="(desc, index) in getVisibleDescriptions(item.strInstructions)"
+                v-for="(desc, index) in getVisibleDescriptions(
+                  item.strInstructions
+                )"
                 :key="index"
               >
                 <div class="flex-shrink-0 mr-4">
                   <div
                     class="w-8 h-8 bg-orange-500 rounded-full flex items-center justify-center text-white font-bold"
-                  >{{ index+1 }}
-                </div>
+                  >
+                    {{ index + 1 }}
+                  </div>
                 </div>
                 <div>
                   <p class="text-gray-700">
@@ -445,7 +411,7 @@ function ingredientsList(item) {
               >
                 <div class="flex items-center justify-center h-full">
                   <a
-                    href="https://www.youtube.com/watch?v=6R8ffRRJcrg"
+                    :href="item.strYoutube"
                     target="_blank"
                     class="flex flex-col items-center text-gray-500 hover:text-red-500 transition-colors duration-200"
                   >
