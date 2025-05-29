@@ -224,7 +224,3 @@ const searchMeal = async () => {
     </section>
   </div>
 </template>
-
-<style scoped>
-/* Additional custom styles if needed */
-</style>
