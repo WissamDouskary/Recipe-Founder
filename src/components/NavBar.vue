@@ -33,6 +33,13 @@ const isActiveLink = (routePath) => {
           >
             Recips
           </RouterLink>
+
+          <RouterLink
+            to="/favori"
+            :class="`text-gray-700 hover:text-orange-500 px-3 py-2 text-sm font-medium transition-colors duration-200 ${isActiveLink('/favori') ? 'text-orange-500 border-b-2 border-orange-500' : ''}`"
+          >
+            Favorites
+          </RouterLink>
         </div>
 
         <div class="md:hidden">
