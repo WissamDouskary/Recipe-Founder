@@ -8,6 +8,7 @@ import PulseLoader from "vue-spinner/src/PulseLoader.vue";
 const state = reactive({
   meals: [],
   isLoading: true,
+  error: "",
 });
 
 const alfa = "abc".split("");
@@ -21,7 +22,9 @@ onMounted(async () => {
       );
       state.meals.push(...res.data.meals);
     }
+    state.error = "";
   } catch (error) {
+    state.error = error.message;
     console.error("error while fetching data", error);
   } finally {
     state.isLoading = false;
@@ -74,7 +77,7 @@ const searchMeal = async () => {
               v-model="searchInput"
               @input="searchMeal"
               type="text"
-              placeholder="Search for recipes, ingredients, or cuisines..."
+              placeholder="Search for recipes..."
               class="w-full px-4 py-3 pl-12 pr-4 text-gray-700 bg-white border border-gray-300 rounded-full transition-all focus:outline-none focus:border-orange-500 focus:ring-2 focus:ring-orange-200 duration-200"
             />
             <svg
@@ -165,12 +168,18 @@ const searchMeal = async () => {
         </div>
         <PulseLoader v-if="state.isLoading" class="text-center" />
         <div
+          v-else-if="state.error !== ''"
+          class="text-red font-bold text-red-600 font"
+        >
+          {{ state.error }}
+        </div>
+        <div
           v-else
           class="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4"
         >
           <RecipsCards
             v-for="meal in state.meals"
-            :key="meal.id"
+            :key="meal.idMeal"
             :meal="meal"
             class="overflow-hidden flex flex-col bg-white rounded-xl shadow-lg transition-shadow hover:shadow-xl duration-300"
           >
