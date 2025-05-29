@@ -58,7 +58,7 @@ const gettags = (tags) => {
     </div>
     <div class="mb-6 text-end mr-3">
       <RouterLink
-        to="/"
+        :to="`/recips/${props.meal.idMeal}`"
         class="bg-orange-500 text-white mb-10 px-4 py-2 rounded-full font-semibold hover:bg-orange-600 transition-colors duration-200"
       >
         View Recipe</RouterLink
