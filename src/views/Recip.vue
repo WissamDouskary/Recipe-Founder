@@ -62,11 +62,12 @@ function ingredientsList(item) {
 
 const addMealToFavorite = () => {
   const localStoragefav = localStorage.getItem("favorites");
-  const currentFavorites = FavoriteArray.value
+  const currentFavorites = localStoragefav
     ? JSON.parse(localStoragefav)
     : [];
+
   state.meal.forEach((item) => {
-    const isAlreadyFavorited = FavoriteArray.value.some(
+    const isAlreadyFavorited = currentFavorites.some(
       (fav) => fav.idMeal === item.idMeal
     );
 
@@ -80,6 +81,7 @@ const addMealToFavorite = () => {
     }
   });
 };
+
 </script>
 
 <template>
